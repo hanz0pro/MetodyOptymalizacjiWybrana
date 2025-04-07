@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metody Optymalizacji Funkcji Wielu Zmiennych</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f9f9f9;
+      color: #333;
+      padding: 20px;
+    }
+    h1, h2, h3 {
+      color: #2c3e50;
+    }
+    .method {
+      background: #fff;
+      border-left: 6px solid #2980b9;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    ul {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Metody Optymalizacji Funkcji Wielu Zmiennych</h1>
+
+  <div class="method">
+  <h2>Wprowadzenie do optymalizacji</h2>
+  <p><strong>Optymalizacja</strong> to dziedzina matematyki i informatyki zajmująca się znajdowaniem najlepszych rozwiązań dla danego problemu w określonych warunkach. W kontekście funkcji wielu zmiennych, optymalizacja polega na znalezieniu takich wartości zmiennych, które minimalizują (lub maksymalizują) wartość funkcji celu.</p>
+  <p>Proces optymalizacji jest nieodzownym elementem nowoczesnych technologii. Odgrywa kluczową rolę w inżynierii (np. minimalizacja zużycia materiałów), ekonomii (maksymalizacja zysków, minimalizacja kosztów), biologii (modelowanie ekosystemów), aż po sztuczną inteligencję (np. uczenie maszynowe, dostrajanie parametrów modeli).</p>
+  <p>Funkcje celu w optymalizacji mogą mieć różny charakter: mogą być wypukłe, niewypukłe, gładkie, nieliniowe, a nawet dyskretne. W zależności od właściwości tych funkcji, stosuje się różne metody optymalizacji, takie jak metody gradientowe, bezgradientowe, heurystyczne i inne. W tym materiale skupimy się na wybranych metodach numerycznych wykorzystywanych przy funkcjach wielu zmiennych, ze szczególnym uwzględnieniem metody największego spadku.</p>
+</div>
+
+  <div class="method">
+    <h2>1. Metoda Największego Spadku (Steepest Descent)</h2>
+    <p><strong>Opis:</strong> Iteracyjna metoda, która w każdym kroku porusza się w kierunku przeciwnym do gradientu funkcji, aby jak najszybciej zmniejszyć jej wartość.</p>
+    <p><strong>Zalety:</strong></p>
+    <ul>
+      <li>Łatwa do zrozumienia i zaimplementowania</li>
+      <li>Użyteczna dla dobrze uwarunkowanych funkcji</li>
+    </ul>
+    <p><strong>Wady:</strong></p>
+    <ul>
+      <li>Powolna zbieżność w "wąskich dolinach"</li>
+      <li>Wymaga doboru długości kroku (learning rate)</li>
+    </ul>
+    <p><strong>Zastosowanie:</strong> Gdy mamy pochodne i stosunkowo proste funkcje.</p>
+  </div>
+
+  <div class="method">
+    <h2>2. Metoda Sprzężonych Gradientów (Conjugate Gradient)</h2>
+    <p><strong>Opis:</strong> Zaawansowana wersja Steepest Descent. Porusza się w kierunkach sprzężonych, co zapewnia szybszą zbieżność, zwłaszcza w problemach kwadratowych.</p>
+    <p><strong>Zalety:</strong></p>
+    <ul>
+      <li>Szybsza niż Steepest Descent</li>
+      <li>Dobrze działa na dużych układach liniowych</li>
+    </ul>
+    <p><strong>Wady:</strong></p>
+    <ul>
+      <li>Bardziej złożona</li>
+      <li>Wymaga gradientu i pamięci poprzednich kroków</li>
+    </ul>
+    <p><strong>Zastosowanie:</strong> Duże systemy równań, optymalizacja funkcji kwadratowych.</p>
+  </div>
+
+  <div class="method">
+    <h2>3. Metoda Przeszukiwania Wzorca (Pattern Search)</h2>
+    <p><strong>Opis:</strong> Bezgradientowa metoda optymalizacji, która testuje wartość funkcji w punktach według określonego wzorca.</p>
+    <p><strong>Zalety:</strong></p>
+    <ul>
+      <li>Nie wymaga pochodnych</li>
+      <li>Może działać na funkcjach nielicznych, szumowych</li>
+    </ul>
+    <p><strong>Wady:</strong></p>
+    <ul>
+      <li>Wolna w wysokowymiarowych przestrzeniach</li>
+    </ul>
+    <p><strong>Zastosowanie:</strong> Problemy, gdzie pochodne są niedostępne lub funkcja jest nieregularna.</p>
+  </div>
+
+  <div class="method">
+    <h2>4. Funkcja Rosenbrocka</h2>
+    <p><strong>Opis:</strong> Standardowa funkcja testowa dla algorytmów optymalizacji. Ma trudny kształt – wąska dolina z globalnym minimum.</p>
+    <p><strong>Wzór:</strong> \( f(x, y) = (a - x)^2 + b(y - x^2)^2 \), zwykle \( a = 1, b = 100 \)</p>
+    <p><strong>Zastosowanie:</strong> Testowanie efektywności metod optymalizacji.</p>
+  </div>
+
+  <h2>Szczegółowy opis: Metoda Największego Spadku</h2>
+  <p>Jest to iteracyjna technika minimalizacji funkcji wielu zmiennych.</p>
+
+  <h3>Kroki algorytmu:</h3>
+  <ol>
+    <li>Wybierz punkt początkowy \( x^{(0)} \)</li>
+    <li>Dla każdej iteracji \( k \):
+      <ul>
+        <li>Oblicz gradient: \( \nabla f(x^{(k)}) \)</li>
+        <li>Wyznacz kierunek spadku: \( d^{(k)} = -\nabla f(x^{(k)}) \)</li>
+        <li>Znajdź długość kroku \( \alpha^{(k)} \), np. metodą przeszukiwania liniowego</li>
+        <li>Zaktualizuj punkt: \( x^{(k+1)} = x^{(k)} + \alpha^{(k)} d^{(k)} \)</li>
+      </ul>
+    </li>
+    <li>Powtarzaj, aż \( ||\nabla f(x)|| \) będzie bliskie zeru</li>
+  </ol>
+
+  <h3>Przykład:</h3>
+  <p>Dla funkcji \( f(x, y) = x^2 + 10y^2 \), gradient wynosi \( \nabla f = [2x, 20y] \). Metoda największego spadku będzie zmniejszać wartość funkcji, ale bardzo wolno ze względu na wąski kształt doliny.</p>
+
+</body>
+</html>
