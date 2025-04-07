@@ -25,13 +25,23 @@
     ul {
       padding-left: 20px;
     }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 20px auto;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      border-radius: 5px;
+    }
   </style>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   <h1>Metody Optymalizacji Funkcji Wielu Zmiennych</h1>
 
   <div class="method">
-  <h2>Wprowadzenie do zagadnienia optymalizacji</h2>
+  <h2>Wprowadzenie do optymalizacji</h2>
   <p><strong>Optymalizacja</strong> to dziedzina matematyki i informatyki zajmująca się znajdowaniem najlepszych rozwiązań dla danego problemu w określonych warunkach. W kontekście funkcji wielu zmiennych, optymalizacja polega na znalezieniu takich wartości zmiennych, które minimalizują (lub maksymalizują) wartość funkcji celu.</p>
   <p>Proces optymalizacji jest nieodzownym elementem nowoczesnych technologii. Odgrywa kluczową rolę w inżynierii (np. minimalizacja zużycia materiałów), ekonomii (maksymalizacja zysków, minimalizacja kosztów), biologii (modelowanie ekosystemów), aż po sztuczną inteligencję (np. uczenie maszynowe, dostrajanie parametrów modeli).</p>
   <p>Funkcje celu w optymalizacji mogą mieć różny charakter: mogą być wypukłe, niewypukłe, gładkie, nieliniowe, a nawet dyskretne. W zależności od właściwości tych funkcji, stosuje się różne metody optymalizacji, takie jak metody gradientowe, bezgradientowe, heurystyczne i inne. W tym materiale skupimy się na wybranych metodach numerycznych wykorzystywanych przy funkcjach wielu zmiennych, ze szczególnym uwzględnieniem metody największego spadku.</p>
@@ -55,40 +65,28 @@
 
   <div class="method">
     <h2>2. Metoda Sprzężonych Gradientów (Conjugate Gradient)</h2>
-    <p><strong>Opis:</strong> Zaawansowana wersja Steepest Descent. Porusza się w kierunkach sprzężonych, co zapewnia szybszą zbieżność, zwłaszcza w problemach kwadratowych.</p>
-    <p><strong>Zalety:</strong></p>
-    <ul>
-      <li>Szybsza niż Steepest Descent</li>
-      <li>Dobrze działa na dużych układach liniowych</li>
-    </ul>
-    <p><strong>Wady:</strong></p>
-    <ul>
-      <li>Bardziej złożona</li>
-      <li>Wymaga gradientu i pamięci poprzednich kroków</li>
-    </ul>
-    <p><strong>Zastosowanie:</strong> Duże systemy równań, optymalizacja funkcji kwadratowych.</p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Conjugate_gradients.svg" alt="Wizualizacja metody sprzężonych gradientów">
+    <p><strong>Opis:</strong> Zaawansowana wersja Steepest Descent. W przeciwieństwie do klasycznego podejścia, zamiast kierunku największego spadku używa tzw. kierunków sprzężonych. Dzięki temu unika oscylacji w dolinach funkcji i szybciej osiąga minimum, zwłaszcza w przypadku funkcji kwadratowych.</p>
+    <p>Każdy nowy kierunek obliczany jest jako kombinacja kierunku gradientu oraz poprzedniego kierunku. To pozwala zredukować liczbę iteracji i poprawia efektywność, szczególnie w przypadku dużych i rzadkich układów liniowych.</p>
+    <p><strong>Zalety:</strong> Duże systemy równań, optymalizacja funkcji kwadratowych.</p>
   </div>
 
   <div class="method">
     <h2>3. Metoda Przeszukiwania Wzorca (Pattern Search)</h2>
-    <p><strong>Opis:</strong> Bezgradientowa metoda optymalizacji, która testuje wartość funkcji w punktach według określonego wzorca.</p>
-    <p><strong>Zalety:</strong></p>
-    <ul>
-      <li>Nie wymaga pochodnych</li>
-      <li>Może działać na funkcjach nielicznych, szumowych</li>
-    </ul>
-    <p><strong>Wady:</strong></p>
-    <ul>
-      <li>Wolna w wysokowymiarowych przestrzeniach</li>
-    </ul>
-    <p><strong>Zastosowanie:</strong> Problemy, gdzie pochodne są niedostępne lub funkcja jest nieregularna.</p>
+    <img src="300px-Direct_search_BROYDEN.gif" alt="Wizualizacja działania przeszukiwania wzorca">
+    <p><strong>Opis:</strong> Metoda nie wymagająca znajomości pochodnych funkcji celu. Działa przez przeszukiwanie przestrzeni rozwiązań według określonego schematu (wzorca), sprawdzając, czy w jego sąsiedztwie wartość funkcji celu się poprawia. W przeciwnym razie zmniejsza krok i próbuje ponownie.</p>
+    <p>Jest szczególnie przydatna w sytuacjach, gdzie funkcja jest szumowa, nieliniowa, nigdzie niegładka lub nieciągła. Dzięki temu znajduje zastosowanie w inżynierii oraz optymalizacji eksperymentalnej.</p>
+    <p><strong>Zalety:</strong> Problemy, gdzie pochodne są niedostępne lub funkcja jest nieregularna.</p>
   </div>
 
   <div class="method">
     <h2>4. Funkcja Rosenbrocka</h2>
-    <p><strong>Opis:</strong> Standardowa funkcja testowa dla algorytmów optymalizacji. Ma trudny kształt – wąska dolina z globalnym minimum.</p>
-    <p><strong>Wzór:</strong> \( f(x, y) = (a - x)^2 + b(y - x^2)^2 \), zwykle \( a = 1, b = 100 \)</p>
+    <img src="Rosenbruck.png" alt="Wizualizacja funkcji Rosenbrocka">
+   
+    <p><strong>Opis:</strong> Znana również jako "banana function" ze względu na kształt doliny, funkcja Rosenbrocka to klasyczny benchmark w testowaniu algorytmów optymalizacyjnych. Zawiera trudne do pokonania krzywizny i długą, wąską dolinę prowadzącą do globalnego minimum.</p>
+    <p><strong>Wzór:</strong> \( f(x, y) = (a - x)^2 + b(y - x^2)^2 \), zwykle \( a = 1, b = 100 \). Funkcja ta jest ciągła i różniczkowalna, ale trudna do optymalizacji klasycznymi metodami.</p>
     <p><strong>Zastosowanie:</strong> Testowanie efektywności metod optymalizacji.</p>
+    <img src="rosembrock_sd.png" alt="Wizualizacja metody największego spadku">
   </div>
 
   <h2>Szczegółowy opis: Metoda Największego Spadku</h2>
