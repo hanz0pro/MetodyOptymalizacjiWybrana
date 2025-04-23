@@ -33,6 +33,17 @@
       box-shadow: 0 0 5px rgba(0,0,0,0.2);
       border-radius: 5px;
     }
+    pre {
+            background: #272822;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            color: #f8f8f2;
+            font-size: 1em;
+        }
+        code {
+            font-family: 'Courier New', monospace;
+        }
   </style>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -61,14 +72,169 @@
       <li>Wymaga doboru długości kroku (learning rate)</li>
     </ul>
     <p><strong>Zastosowanie:</strong> Gdy mamy pochodne i stosunkowo proste funkcje.</p>
+    <h3>Dane wejściowe:</h3>
+  <ul>
+    <li>Funkcja celu \( f(x) \)</li>
+    <li>Gradient funkcji \( \nabla f(x) \)</li>
+    <li>Punkt początkowy \( x_0 \)</li>
+    <li>Krok \( \alpha > 0 \)</li>
+    <li>Tolerancja \( \varepsilon > 0 \)</li>
+  </ul>
+
+  <h3>Kroki algorytmu:</h3>
+  <ol>
+    <li>Inicjalizacja: wybierz \( x_0 \), ustaw \( k = 0 \)</li>
+    <li>Powtarzaj:
+      <ul>
+        <li>Oblicz gradient: \( g_k = \nabla f(x_k) \)</li>
+        <li>Jeśli \( \|g_k\| < \varepsilon \), zakończ</li>
+        <li>Zaktualizuj punkt: \( x_{k+1} = x_k - \alpha_k \cdot g_k \)</li>
+        <li>Znajdź najlepszy krok \( \alpha_k \) metodą line search, tzn. znajdź minimum funkcji:
+          \( \phi(\alpha) = f(x_k - \alpha g_k) \)
+      </li>
+        <li>Zwiększ \( k = k + 1 \)</li>
+      </ul>
+    </li>
+    <li>Zwróć \( x_k \) jako minimum</li>
+  </ol>
+
+  <h3>📌 Uwagi:</h3>
+  <ul>
+    <li>Jeśli \( \alpha \) jest zbyt duże – brak zbieżności</li>
+    <li>Zbyt małe \( \alpha \) – wolna zbieżność</li>
+    <li>Popularne podejście: dobór \( \alpha \) przez line search</li>
+  </ul>
+  <h2>Przykład Kodu</h2>
+  <pre><code>
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from sympy import *
+    
+    # =========================
+    # 1. Symboliczne pochodne
+    # =========================
+    
+    x_sym, y_sym = symbols('x y')
+    
+    # Funkcja celu f(x, y)
+    f_expr = x_sym**2 + y_sym**2
+    
+    # Gradient symbolicznie
+    grad_expr = Matrix([diff(f_expr, var) for var in (x_sym, y_sym)])
+    
+    # Zamiana na funkcje numeryczne
+    f = lambdify((x_sym, y_sym), f_expr, 'numpy')
+    grad_f = lambdify((x_sym, y_sym), grad_expr, 'numpy')
+    
+    # =========================
+    # 2. Parametry algorytmu
+    # =========================
+    
+    point = np.array([2.0, 2.0])   # punkt startowy (x, y)
+    eta = 0.1                     # krok
+    tolerance = 1e-6
+    max_iter = 1000
+    
+    points = [point.copy()]
+    
+    print("=== Gradient Descent Log ===\n")
+    
+    # =========================
+    # 3. Gradient descent loop
+    # =========================
+    
+    for i in range(max_iter):
+        grad = np.array(grad_f(*point)).astype(float).flatten()
+        new_point = point - eta * grad
+        step_size = np.linalg.norm(new_point - point)
+    
+        # Logowanie
+        print(f"Iteracja {i + 1}:")
+        print(f"  Punkt:        {point}")
+        print(f"  f(x, y):      {f(*point):.6f}")
+        print(f"  Gradient:     {grad}")
+        print(f"  Długość kroku: {step_size:.6e}\n")
+    
+        points.append(new_point.copy())
+    
+        if step_size < tolerance:
+            print(f"✅ Zbieżność osiągnięta po {i+1} iteracjach.\n")
+            break
+    
+        point = new_point
+    
+    # =========================
+    # 4. Wynik końcowy
+    # =========================
+    
+    print("=== Wynik końcowy ===")
+    print(f"Minimum znalezione w punkcie ≈ {point}")
+    print(f"f(x, y) ≈ {f(*point):.6f}")
+    
+    # =========================
+    # 5. Wykres poziomic + ścieżka
+    # =========================
+    
+    X, Y = np.meshgrid(np.linspace(-4, 6, 400), np.linspace(-4, 4, 400))
+    Z = f(X, Y)
+    
+    points = np.array(points)
+    
+    plt.figure(figsize=(8, 6))
+    contour = plt.contour(X, Y, Z, levels=30, cmap='viridis')
+    plt.plot(points[:, 0], points[:, 1], 'ro--', label='Ścieżka gradientu')
+    plt.scatter(points[-1, 0], points[-1, 1], color='red', zorder=5)
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.title("Gradient descent dla f(x, y)")
+    plt.grid(True)
+    plt.legend()
+    plt.colorbar(contour, label="f(x, y)")
+    plt.show()
+    </code></pre>
+    <h3>Przykładowy wynik</h3>
+    <pre>
+      <code>
+      ✅ Zbieżność osiągnięta po 61 iteracjach.
+
+      === Wynik końcowy ===
+      Minimum znalezione w punkcie ≈ [3.06499108e-06 3.06499108e-06]
+      f(x, y) ≈ 0.000000
+      </code>
+    </pre>
+    
+    <img src="shortest.png" alt="Wizualizacja metody największego spadku">
   </div>
 
   <div class="method">
     <h2>2. Metoda Sprzężonych Gradientów (Conjugate Gradient)</h2>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Conjugate_gradients.svg" alt="Wizualizacja metody sprzężonych gradientów">
+    
     <p><strong>Opis:</strong> Zaawansowana wersja Steepest Descent. W przeciwieństwie do klasycznego podejścia, zamiast kierunku największego spadku używa tzw. kierunków sprzężonych. Dzięki temu unika oscylacji w dolinach funkcji i szybciej osiąga minimum, zwłaszcza w przypadku funkcji kwadratowych.</p>
     <p>Każdy nowy kierunek obliczany jest jako kombinacja kierunku gradientu oraz poprzedniego kierunku. To pozwala zredukować liczbę iteracji i poprawia efektywność, szczególnie w przypadku dużych i rzadkich układów liniowych.</p>
     <p><strong>Zalety:</strong> Duże systemy równań, optymalizacja funkcji kwadratowych.</p>
+    <h2>🔁 Conjugate Gradient Method – Algorytm</h2>
+
+<pre><code># Dane:
+# A – macierz (n x n), symetryczna i dodatnio określona
+# b – wektor wynikowy
+# x0 – punkt początkowy
+# ε – tolerancja dokładności
+# max_iter – maksymalna liczba iteracji
+
+1. Ustaw x = x0
+2. Oblicz r = b - A·x       # wektor reszt
+3. Ustaw p = r              # kierunek początkowy
+4. Dla k = 0, 1, 2, ..., aż do max_iter:
+    a. Oblicz α = (rᵗ·r) / (pᵗ·A·p)
+    b. Zaktualizuj x = x + α·p
+    c. Oblicz r_new = r - α·A·p
+    d. Jeśli ||r_new|| < ε, przerwij (zbieżność)
+    e. Oblicz β = (r_newᵗ·r_new) / (rᵗ·r)
+    f. Zaktualizuj p = r_new + β·p
+    g. Ustaw r = r_new
+5. Zwróć x jako przybliżone rozwiązanie układu Ax = b
+</code></pre>
+<img src="second_method.png" alt="Wizualizacja metody sprzężonych gradientów">
   </div>
 
   <div class="method">
@@ -88,26 +254,17 @@
     <p><strong>Zastosowanie:</strong> Testowanie efektywności metod optymalizacji.</p>
     <img src="rosembrock_sd.png" alt="Wizualizacja metody największego spadku">
   </div>
-
-  <h2>Szczegółowy opis: Metoda Największego Spadku</h2>
-  <p>Jest to iteracyjna technika minimalizacji funkcji wielu zmiennych.</p>
-
-  <h3>Kroki algorytmu:</h3>
-  <ol>
-    <li>Wybierz punkt początkowy \( x^{(0)} \)</li>
-    <li>Dla każdej iteracji \( k \):
-      <ul>
-        <li>Oblicz gradient: \( \nabla f(x^{(k)}) \)</li>
-        <li>Wyznacz kierunek spadku: \( d^{(k)} = -\nabla f(x^{(k)}) \)</li>
-        <li>Znajdź długość kroku \( \alpha^{(k)} \), np. metodą przeszukiwania liniowego</li>
-        <li>Zaktualizuj punkt: \( x^{(k+1)} = x^{(k)} + \alpha^{(k)} d^{(k)} \)</li>
-      </ul>
-    </li>
-    <li>Powtarzaj, aż \( ||\nabla f(x)|| \) będzie bliskie zeru</li>
-  </ol>
-
-  <h3>Przykład:</h3>
-  <p>Dla funkcji \( f(x, y) = x^2 + 10y^2 \), gradient wynosi \( \nabla f = [2x, 20y] \). Metoda największego spadku będzie zmniejszać wartość funkcji, ale bardzo wolno ze względu na wąski kształt doliny.</p>
-
+  <div class="method">
+    <h2>Bibliografia</h2>
+    <ul>
+      <li>Boyd, S., & Vandenberghe, L. (2004). <em>Convex Optimization</em>. Cambridge University Press.</li>
+      <li>Burden, R. L., & Faires, J. D. (2011). <em>Numerical Analysis</em> (9th ed.). Brooks/Cole.</li>
+      <li>Wikipedia contributors. (n.d.). <em>Conjugate gradient method</em>. Retrieved from <a href="https://en.wikipedia.org/wiki/Conjugate_gradient_method" target="_blank">[LINK]</a></li>
+      <li>MathWorks. (n.d.). <em>Pattern Search</em>. Retrieved from <a href="https://www.mathworks.com/help/gads/pattern-search.html" target="_blank">[LINK]</a></li>
+      <li>Zbigniew Szadkowski -  Metody optymalizacji Metody gradientowe - Maj 2020</li>
+      <li>Conjugate gradient methods - Alexandra Roberts, Anye Shi, Yue Sun <a href="https://www.mathworks.com/help/gads/pattern-search.html" target="_blank">[LINK]</a></li>  
+    </ul>
+  </div>
+  <h3>Wykonał : Jakub Litwin</h3>
 </body>
 </html>
